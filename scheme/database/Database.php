@@ -268,6 +268,12 @@ class Database {
             PDO::ATTR_EMULATE_PREPARES   => false,
         );
 
+        // Aiven MySQL requires TLS. Point DB_SSL_CA at the downloaded Aiven
+        // CA certificate to validate the server certificate in production.
+        if ($driver === 'mysql' && !empty($database_config['ssl_ca']) && defined('PDO::MYSQL_ATTR_SSL_CA')) {
+            $options[constant('PDO::MYSQL_ATTR_SSL_CA')] = $database_config['ssl_ca'];
+        }
+
         try {
             $this->db = new PDO($dsn, $username, $password, $options);
             $this->driver = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);

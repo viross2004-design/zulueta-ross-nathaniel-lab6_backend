@@ -1,3 +1,48 @@
+# Laboratory Exercise 6 — Stockroom
+
+React + LavaLust inventory manager. The Laravel typo in the request is handled as LavaLust because that is the backend framework supplied in this workspace and named in the activity sheet.
+
+## Included
+
+- LavaLust JSON API for registration, login, logout, and authenticated product CRUD.
+- React catalog with inventory summary, search, add/edit dialog, and delete confirmation.
+- LavaLust migrations for `users`, `refresh_tokens`, and `products`.
+- Migration controller and `php lava migration ...` CLI helper from the migration guide. The helper folder follows this version of LavaLust: `app/commands`.
+
+## Run locally
+
+1. Copy `.env.example` to `.env`. Set `DB_DRIVER=mysql`, `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME` for your MySQL database. Set `DB_CHARSET=utf8mb4`.
+2. Generate private API signing keys with `php lava jwt:generate`. Keep `.env` out of Git.
+3. Run migrations with `php lava migration run`. Use `php lava migration status` to see the migration state. `rollback-all` and `refresh` remove application tables and should only be used with a development database.
+4. Start LavaLust with `php lava serve` (port 3000).
+5. In another terminal, run `cd frontend`, `npm install`, then `npm run dev`. Open the Vite URL and create an account. Vite proxies `/api` to `http://127.0.0.1:3000`.
+
+The migration routes (`/migrate`, `/rollback`, `/rollback-all`, `/refresh`, `/status`, and `/create-migration/{name}`) are available for this lab in the development environment. The controller blocks browser migration requests when `APP_ENV=production`; use the CLI command when deploying.
+
+## Aiven MySQL and Render
+
+- Create an Aiven MySQL service and database. Put its host, port, database name, username, and password in the LavaLust service environment variables. Set `DB_SSL_CA` to the path of Aiven's CA certificate (mount it as a Render secret file) so PDO verifies the TLS certificate.
+- Deploy this repository as a Render Docker web service using the included `Dockerfile`. Set `APP_ENV=production`, `DB_DRIVER=mysql`, all `DB_*` values, `JWT_SECRET`, `REFRESH_TOKEN_KEY`, and `FRONTEND_URL` to your deployed React origin. Generate separate random values of at least 32 characters for the JWT and refresh keys; never commit them.
+- Run `php lava migration run` against the configured production database once as a release/deploy step. The React app only calls the LavaLust API; it never receives MySQL credentials.
+- Deploy `frontend` as a static site. Build command: `npm install && npm run build`; publish directory: `frontend/dist`. Set `VITE_API_URL` to the Render API origin (no trailing slash), then rebuild.
+- Register an account from the login screen, then use the product screen to add, edit, search, and delete inventory.
+
+## API routes
+
+| Method | Route | Access |
+| --- | --- | --- |
+| POST | `/api/register` | Public |
+| POST | `/api/login` | Public |
+| POST | `/api/logout` | Bearer token |
+| GET | `/api/products` | Bearer token |
+| POST | `/api/products` | Bearer token |
+| PUT, PATCH | `/api/products/{id}` | Bearer token |
+| DELETE | `/api/products/{id}` | Bearer token |
+
+The API uses LavaLust's `Api` library for JSON responses, rate limiting, access-token checks, and refresh-token revocation. Registration is open for the class demo; add an invite or admin approval flow before using it for a public production service.
+
+---
+
 # LavaLust Framework
 
 > A lightweight, fast PHP framework built for developers who want clean MVC architecture without unnecessary complexity or performance overhead.
