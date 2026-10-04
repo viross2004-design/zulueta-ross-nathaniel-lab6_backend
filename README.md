@@ -22,9 +22,9 @@ The migration routes (`/migrate`, `/rollback`, `/rollback-all`, `/refresh`, `/st
 ## Aiven MySQL and Render
 
 - Create an Aiven MySQL service and database. Put its host, port, database name, username, and password in the LavaLust service environment variables. Set `DB_SSL_CA` to the path of Aiven's CA certificate (mount it as a Render secret file) so PDO verifies the TLS certificate.
-- Deploy this repository as a Render Docker web service using the included `Dockerfile`. Set `APP_ENV=production`, `DB_DRIVER=mysql`, all `DB_*` values, `JWT_SECRET`, `REFRESH_TOKEN_KEY`, and `FRONTEND_URL` to your deployed React origin. Generate separate random values of at least 32 characters for the JWT and refresh keys; never commit them.
+- Deploy this repository as a Render Docker web service using the included `Dockerfile`. In the backend service's Render environment, set `APP_ENV=production`, `DB_DRIVER=mysql`, all `DB_*` values, `JWT_SECRET`, `REFRESH_TOKEN_KEY`, and `FRONTEND_URL=https://zulueta-ross-nathaniel-lavalust-frontend.onrender.com`. The backend service does not read this machine's ignored `.env` file on Render. Generate separate random values of at least 32 characters for the JWT and refresh keys; never commit them.
 - Run `php lava migration run` against the configured production database once as a release/deploy step. The React app only calls the LavaLust API; it never receives MySQL credentials.
-- Deploy `frontend` as a static site. Build command: `npm install && npm run build`; publish directory: `frontend/dist`. Set `VITE_API_URL` to the Render API origin (no trailing slash), then rebuild.
+- Deploy `frontend` as a static site. Build command: `npm install && npm run build`; publish directory: `frontend/dist`. Set `VITE_API_URL=https://zulueta-ross-nathaniel-lab6-backend.onrender.com` in the static site's Render environment, then redeploy so the URL is included in the build. The frontend also uses this backend URL as its production fallback.
 - Register an account from the login screen, then use the product screen to add, edit, search, and delete inventory.
 
 ## API routes
