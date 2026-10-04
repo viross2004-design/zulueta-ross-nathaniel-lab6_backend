@@ -145,7 +145,7 @@ $config['users_table'] = 'users';
 | a browser, so set your real domain in production.
 |
 */
-$config['allow_origin'] = getenv('FRONTEND_URL') ?: '*';
+$config['allow_origin'] = getenv('FRONTEND_URL') ?: 'https://zulueta-ross-nathaniel-lavalust-frontend.onrender.com/';
 
 /*
 |--------------------------------------------------------------------------
