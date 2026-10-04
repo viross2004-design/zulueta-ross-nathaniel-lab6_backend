@@ -145,7 +145,9 @@ $config['users_table'] = 'users';
 | a browser, so set your real domain in production.
 |
 */
-$config['allow_origin'] = getenv('FRONTEND_URL') ?: 'https://zulueta-ross-nathaniel-lavalust-frontend.onrender.com/';
+$frontend_origin = 'https://zulueta-ross-nathaniel-lavalust-frontend.onrender.com';
+$configured_origins = array_filter(array_map('trim', explode(',', getenv('FRONTEND_URL') ?: '')));
+$config['allow_origin'] = array_values(array_unique(array_merge([$frontend_origin], $configured_origins)));
 
 /*
 |--------------------------------------------------------------------------
@@ -165,7 +167,7 @@ $config['refresh_token_table'] = 'refresh_tokens';
 | application's name or URL.
 |
 */
-$config['jwt_issuer'] = 'your-app';
+$config['jwt_issuer'] = 'users';
 
 /*
 |--------------------------------------------------------------------------
