@@ -6,6 +6,8 @@ class ApiController extends Controller
     public function __construct()
     {
         parent::__construct();
+        // Send CORS headers before database or signing-key initialization can fail.
+        handle_cors();
         $this->call->database();
         $this->call->library('api');
     }

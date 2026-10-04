@@ -474,6 +474,8 @@ if ( ! function_exists('handle_cors'))
 	 */
 	function handle_cors()
 	{
+		// Preflight requests reach the router before the API library is loaded.
+		load_class('config', 'kernel')->load('api');
 		$allow_origin = config_item('allow_origin');
 		$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 		$allowed_origins = is_array($allow_origin) ? $allow_origin : explode(',', (string) $allow_origin);
